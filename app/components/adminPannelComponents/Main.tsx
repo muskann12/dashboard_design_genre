@@ -7,8 +7,9 @@ import KPIsCard from "./KPIsCard";
 import Cookies from "js-cookie";
 import { motion } from "framer-motion";
 import { IoIosLogOut } from "react-icons/io";
-import { Trash2 } from "lucide-react";
+import { Link, Trash2 } from "lucide-react";
 import TickToggle from "./TickToggle";
+import Image from "next/image";
 
 const fetchOrders = async (): Promise<any[]> => {
   const res = await fetch("/api/orders");
@@ -28,7 +29,9 @@ export default function Dashboard() {
   const [filteredOrders, setFilteredOrders] = useState(orders);
   const totalOrders = orders.length;
   const [showWelcome, setShowWelcome] = useState(true);
-  const [sortBy, setSortBy] = useState<"orderDate" | "totalAmount" | "quantity">("orderDate");
+  const [sortBy, setSortBy] = useState<
+    "orderDate" | "totalAmount" | "quantity"
+  >("orderDate");
 
   useEffect(() => {
     const filtered = orders.filter((order) =>
@@ -71,7 +74,6 @@ export default function Dashboard() {
     }
   }, [router]);
 
-
   useEffect(() => {
     setTimeout(() => setShowWelcome(false), 3000);
   }, []);
@@ -106,22 +108,23 @@ export default function Dashboard() {
       return a.payment.total - b.payment.total;
     } else if (sortBy === "quantity") {
       console.log("Sorting by Quantity");
-      const qtyA = a.items?.reduce(
-        (sum: number, item: OrderItem) => sum + (item.quantity || 0),
-        0
-      ) ?? 0;
-  
-      const qtyB = b.items?.reduce(
-        (sum: number, item: OrderItem) => sum + (item.quantity || 0),
-        0
-      ) ?? 0;
-  
+      const qtyA =
+        a.items?.reduce(
+          (sum: number, item: OrderItem) => sum + (item.quantity || 0),
+          0
+        ) ?? 0;
+
+      const qtyB =
+        b.items?.reduce(
+          (sum: number, item: OrderItem) => sum + (item.quantity || 0),
+          0
+        ) ?? 0;
+
       console.log("Quantity A:", qtyA, "Quantity B:", qtyB);
       return qtyA - qtyB;
     }
     return 0;
   });
-  
 
   return (
     <>
@@ -208,14 +211,14 @@ export default function Dashboard() {
                   <table className="min-w-full border-collapse">
                     <thead>
                       <tr className="grid grid-cols-12 md:font-bold md:text-[1rem] py-3 border-b border-gray-700 text-center  sm:text-sm sm:font-normal w-[80rem]">
-                        <th className="">S.No</th>
                         <th>Account</th>
                         <th className="">Name</th>
                         <th className="">Date</th>
-                        <th className="2">T.Amount</th>
+                        <th className="">T.Amount</th>
                         <th className="">Quantity</th>
                         <th className="">Items</th>
                         <th className="">Address</th>
+                        <th className="">Image</th>
                         <th className="">Pay.Mthd</th>
                         <th className="">Phone</th>
                         <th className="">Delivered</th>
@@ -253,8 +256,9 @@ export default function Dashboard() {
                           key={order._id}
                           className="grid grid-cols-12 py-3 border-b border-gray-700 text-center  text-sm font-normal w-[80rem]"
                         >
-                          <p>{index + 1}</p>
-                          <p>{order.accountName}</p>
+                          <p>
+                            {index + 1}- {order.accountName}
+                          </p>
                           <p className="">
                             {order.orderData.customer?.fullName ||
                               "No customer name available"}
@@ -286,6 +290,7 @@ export default function Dashboard() {
                               <p>No items available</p>
                             )}
                           </p>
+
                           <div className="space-y-2">
                             {order?.orderData?.items?.length > 0 ? (
                               order.orderData.items.map(
@@ -315,6 +320,53 @@ export default function Dashboard() {
                           <p className="pl-4">
                             {order.orderData.customer.address.fullAddress}
                           </p>
+
+                          <div className="space-y-2">
+                            {order?.orderData?.items?.length > 0 ? (
+                              order.orderData.items.map(
+                                (itemGroup: any, groupIndex: number) => (
+                                  <div key={groupIndex} className="mb-4">
+                                    {Object.entries(itemGroup)
+                                      .filter(
+                                        ([key, item]: [string, any]) =>
+                                          key !== "_id" && item?.name // filter out _id and invalid items
+                                      )
+                                      .map(
+                                        (
+                                          [key, item]: [string, any],
+                                          itemIndex: number
+                                        ) => (
+                                          <div
+                                            key={itemIndex}
+                                            className="flex flex-col gap-1 text-sm text-white w-[120px]"
+                                          >
+                                            <Image
+                                              src={item.image}
+                                              alt={item.name}
+                                              width={50}
+                                              height={50}
+                                              className="pl-4 w-28 h-28 object-cover"
+                                            />
+                                            <a
+                                              href={item.image}
+                                              download
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="text-blue-600 underline hover:text-blue-800"
+                                            >
+                                              Click here to download
+                                            </a>
+                                          </div>
+                                        )
+                                      )}
+                                  </div>
+                                )
+                              )
+                            ) : (
+                              <p>No items available</p>
+                            )}
+                          </div>
+
                           <p className="pl-4">{order.selectedMethod || "-"}</p>
                           <p className="pl-4">
                             {order.orderData.customer.contactNumber}
