@@ -14,13 +14,17 @@ export default function Login() {
   const router = useRouter();
   const handleLogin = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (email === process.env.ADMIN_PANNEL_EMAIL && password === process.env.ADMIN_PANNEL_PASSWORD ) {
-      Cookies.set("authToken", "your-secret-token", { expires: 1 });
-      localStorage.setItem("adminUsername", username);
-      router.push("/");
-    } else {
-      alert("Invalid credentials");
-    }
+   if (
+  email === process.env.NEXT_PUBLIC_ADMIN_EMAIL &&
+  password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD
+) {
+  Cookies.set("authToken", "your-secret-token", { expires: 1 });
+  localStorage.setItem("adminUsername", username);
+  router.push("/");
+} else {
+  alert("Invalid credentials");
+}
+
   };
   
   return (

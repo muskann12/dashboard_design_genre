@@ -340,22 +340,62 @@ export default function Dashboard() {
                                             key={itemIndex}
                                             className="flex flex-col gap-1 text-sm text-white w-[120px]"
                                           >
-                                            <Image
-                                              src={item.image}
-                                              alt={item.name}
-                                              width={50}
-                                              height={50}
-                                              className="pl-4 w-28 h-28 object-cover"
-                                            />
-                                            <a
-                                              href={item.image}
-                                              download
-                                              target="_blank"
-                                              rel="noopener noreferrer"
-                                              className="text-blue-600 underline hover:text-blue-800"
-                                            >
-                                              Click here to download
-                                            </a>
+                                          <div className="flex flex-col gap-4 items-center text-sm text-white w-[140px]">
+  {/* Main Product Image */}
+  {item.image ? (
+    <div className="flex flex-col items-center mb-2">
+      <p className="text-xs text-white mb-1">Main Image</p>
+      <Image
+        src={item.image}
+        alt={item.name}
+        width={80}
+        height={80}
+        className="w-20 h-20 object-cover"
+      />
+      <a
+        href={item.image}
+        download
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-400 underline text-xs"
+      >
+        Download
+      </a>
+    </div>
+  ) : (
+    <p className="text-xs italic text-gray-400">No main image</p>
+  )}
+
+  {/* Design Images (with area) */}
+  {item.designs?.map((design: any, i: number) => (
+    <div key={i} className="flex flex-col items-center mb-2">
+      <p className="text-xs text-white mb-1">{design.area}</p>
+      {design.image ? (
+        <>
+          <Image
+            src={design.image}
+            alt={`${item.name} - ${design.area}`}
+            width={80}
+            height={80}
+            className="w-20 h-20 object-cover"
+          />
+          <a
+            href={design.image}
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 underline text-xs"
+          >
+            Download
+          </a>
+        </>
+      ) : (
+        <p className="text-xs italic text-gray-400">No design image</p>
+      )}
+    </div>
+  ))}
+</div>
+
                                           </div>
                                         )
                                       )}
